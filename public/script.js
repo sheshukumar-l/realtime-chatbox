@@ -30,9 +30,9 @@ function timeShort(iso) {
 function addMessage(m, self = false) {
   const el = document.createElement("div");
   el.className = "msg" + (self ? " self" : "");
-  const meta = <div class="meta">${m.username}</div>;
-  const body = <div class="text">${m.msg}</div>;
-  const time = <div class="time">${timeShort(m.ts)}</div>;
+  const meta = `<div class="meta">${m.username}</div>`;
+  const body = `<div class="text">${m.msg}</div>`;
+  const time =` <div class="time">${timeShort(m.ts)}</div>`;
   el.innerHTML =` ${meta}${body}${time}`;
   messagesDiv.appendChild(el);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
