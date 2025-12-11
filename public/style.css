@@ -1,44 +1,65 @@
-body {
-  font-family: sans-serif;
-  background: #eef2ff;
-  padding: 20px;
+
+:root{
+  --bg:#0f1720;
+  --sidebar:#0b1220;
+  --panel:#0b1226;
+  --accent:#5865F2;
+  --muted:#99a1b3;
+  --bubble:#1f2a37;
+  --self:#2b6a4a;
+  --white:#e6eef8;
 }
 
-.hidden { display: none; }
-
-#home, #chat {
-  max-width: 400px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px #ccc;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:var(--white);
+  height:100vh;
+  display:flex;
+  align-items:stretch;
+  justify-content:center;
+  padding:18px;
 }
 
-input, button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+#app{width:100%;max-width:1100px;display:flex;height:calc(100vh - 36px);border-radius:10px;overflow:hidden;box-shadow:0 12px 40px rgba(2,6,23,0.6)}
+#sidebar{
+  width:260px;background:var(--sidebar);padding:16px;display:flex;flex-direction:column;gap:14px;
 }
+.logo{font-weight:700;color:var(--accent);font-size:20px;margin-bottom:6px}
+.section{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:8px}
+.label{font-size:12px;color:var(--muted);margin-bottom:8px}
+.rooms{list-style:none;padding:0;margin:0;max-height:38vh;overflow:auto}
+.rooms li{padding:8px 10px;border-radius:6px;color:var(--white);cursor:pointer;margin-bottom:6px;background:transparent}
+.rooms li:hover{background:rgba(255,255,255,0.03)}
+.room-create{display:flex;gap:8px;margin-top:8px}
+.room-create input{flex:1;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--white)}
+.room-create button{width:40px;background:var(--accent);border:none;border-radius:6px;color:white;cursor:pointer}
 
-button {
-  background: #0066ff;
-  color: white;
-  font-weight: bold;
-}
+.wide{width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:white;margin-top:8px;cursor:pointer}
 
-.error {
-  color: red;
-  margin-top: 10px;
-}
+#main{flex:1;display:flex;flex-direction:column;background:var(--panel);padding:12px}
+#mainHeader{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.03);margin-bottom:8px}
+#roomTitle{font-weight:700}
+#roomUsers{color:var(--muted);font-size:13px}
 
-#messages {
-  height: 300px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  padding: 10px;
-  margin-bottom: 10px;
-  background: #f8f9ff;
+.messages{flex:1;overflow:auto;padding:12px 8px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:70%;background:var(--bubble);padding:10px 12px;border-radius:10px;color:var(--white);box-shadow:0 8px 20px rgba(2,6,23,0.3)}
+.msg .meta{font-size:12px;color:var(--muted);margin-bottom:6px}
+.msg.self{margin-left:auto;background:linear-gradient(90deg,var(--self),#3aa878)}
+.msg .text{white-space:pre-wrap;word-break:break-word}
+.msg .time{display:block;font-size:11px;color:var(--muted);margin-top:6px;text-align:right}
+
+.join-notice{text-align:center;color:var(--muted);font-size:13px;margin:6px 0}
+
+#typingIndicator{height:20px;color:var(--muted);padding-left:8px;font-size:13px;margin-bottom:6px}
+
+#composer{display:flex;gap:8px;align-items:center;padding-top:8px}
+#composer input{flex:1;padding:10px;border-radius:10px;border:none;background:#0d1620;color:var(--white)}
+#composer button{padding:10px 14px;border-radius:10px;border:none;background:var(--accent);color:white;cursor:pointer}
+
+@media (max-width:900px){
+  #sidebar{display:none}
+  #app{max-width:100%}
 }
