@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Real-Time Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="home">
+    <h2>Join Chat</h2>
+
+    <input id="username" placeholder="Your name..." />
+    
+    <button id="joinGlobal">Join Global Chat</button>
+
+    <h3>Create Room</h3>
+    <input id="roomName" placeholder="Room name..." />
+    <button id="createRoom">Create</button>
+
+    <h3>Join Room</h3>
+    <input id="joinRoomName" placeholder="Room name..." />
+    <button id="joinRoom">Join</button>
+
+    <p id="error" class="error"></p>
+  </div>
+
+  <div id="chat" class="hidden">
+    <h2 id="chatTitle"></h2>
+
+    <div id="messages"></div>
+
+    <input id="msgInput" placeholder="Type message..." />
+    <button id="sendBtn">Send</button>
+  </div>
+
+  <script src="https://real-time-chatbox-f4k1.onrender.com/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
