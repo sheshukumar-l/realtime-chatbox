@@ -3,65 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <title>Realtime ChatBox</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <div id="app">
 
-    <!-- ===== JOIN SCREEN ===== -->
-    <div id="joinScreen" class="join-screen">
-      <div class="join-card">
-        <h1>Realtime ChatBox</h1>
-        <p class="subtitle">Fast. Secure. No signup.</p>
+<div id="app">
 
-        <input id="usernameInput" placeholder="Username" />
+  <!-- JOIN SCREEN -->
+  <div id="joinScreen" class="join-screen">
+    <div class="join-card">
+      <h1>Realtime ChatBox</h1>
+      <p class="subtitle">Connect instantly. No signup.</p>
 
-        <button id="joinGlobalBtn" class="btn primary">
-          Join Global Chat
-        </button>
+      <input id="usernameInput" placeholder="Your username" />
 
-        <div class="divider">OR</div>
+      <button id="joinGlobalBtn" class="btn primary">
+        🌍 Join Global Chat
+      </button>
 
-        <input id="roomPasswordInput" placeholder="Private room password" />
+      <div class="divider">OR</div>
 
-        <button id="createPrivateBtn" class="btn secondary">
-          Create Private Room
-        </button>
+      <input id="privatePasswordInput" placeholder="Room password" />
+      <button id="createPrivateBtn" class="btn secondary">
+        🔒 Create Private Room
+      </button>
 
-        <input id="roomCodeInput" placeholder="Room code" />
-
-        <button id="joinPrivateBtn" class="btn secondary">
-          Join Private Room
-        </button>
-      </div>
+      <input id="privateCodeInput" placeholder="Room code" />
+      <button id="joinPrivateBtn" class="btn secondary">
+        🔑 Join Private Room
+      </button>
     </div>
-
-    <!-- ===== CHAT SCREEN ===== -->
-    <div id="chatScreen" class="chat-screen hidden">
-
-      <div class="chat-header">
-        <div>
-          <h2 id="roomTitle">Chat</h2>
-          <span class="status">Online</span>
-        </div>
-        <button id="exitBtn" class="exit-btn">Exit</button>
-      </div>
-
-      <div id="messages" class="messages"></div>
-
-      <div class="chat-input">
-        <input id="msgInput" placeholder="Type your message..." />
-        <button id="sendBtn" class="send-btn">Send</button>
-      </div>
-
-    </div>
-
   </div>
 
-  <!-- Socket -->
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <script src="script.js"></script>
+  <!-- CHAT SCREEN -->
+  <div id="chatScreen" class="chat-screen hidden">
+    <div class="chat-header">
+      <div>
+        <h2 id="chatTitle">Chat</h2>
+        <div class="status">Online</div>
+      </div>
+      <button id="exitBtn" class="exit-btn">Exit</button>
+    </div>
+
+    <div id="messages" class="messages"></div>
+
+    <div class="chat-input">
+      <input id="messageInput" placeholder="Type your message..." />
+      <button id="sendBtn" class="send-btn">Send</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
