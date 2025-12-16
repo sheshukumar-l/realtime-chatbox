@@ -2,55 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Realtime Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="app">
+<div id="join">
+  <h2>Join Chat</h2>
+  <input id="username" placeholder="Your name" />
 
-  <!-- JOIN SCREEN -->
-  <div id="join" class="screen active fade-in">
-    <div class="card">
-      <h1>💬 <Realtime-ChatBox></Realtime-ChatBox></h1>
-      <p class="subtitle">Connect instantly with anyone</p>
+  <button id="globalBtn">Join Global</button>
 
-      <input id="username" placeholder="Your username" />
+  <hr />
 
-      <button id="joinGlobal" class="primary">Join Global Chat</button>
+  <input id="roomPassword" placeholder="Room password" />
+  <button id="createRoom">Create Private Room</button>
 
-      <div class="divider">OR</div>
-
-      <input id="roomPassword" placeholder="Private room password" />
-      <button id="createRoom">Create Private Room</button>
-
-      <input id="roomCode" placeholder="Enter room code" />
-      <button id="joinRoom">Join Private Room</button>
-    </div>
-  </div>
-
-  <!-- CHAT SCREEN -->
-  <div id="chat" class="screen fade-in hidden">
-    <div class="top">
-  <div class="room-info">
-    <span class="dot"></span>
-    <span id="roomTitle">Global Chat</span>
-  </div>
-  <button id="exit" class="exit-btn">Exit</button>
-</div>
-    <div id="messages" class="messages"></div>
-
-    <div class="chat-input">
-      <input id="msg" placeholder="Type your message..." />
-      <button id="send">Send</button>
-    </div>
-  </div>
-
+  <input id="roomCode" placeholder="Room code" />
+  <button id="joinRoom">Join Private Room</button>
 </div>
 
-<!-- Socket.IO -->
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<div id="chat" class="hidden">
+  <header>
+    <span id="roomTitle"></span>
+    <button id="exitBtn">Exit</button>
+  </header>
+
+  <div id="messages"></div>
+  <div id="typing"></div>
+
+  <div id="inputArea">
+    <input id="msgInput" placeholder="Type message..." />
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script src="https://realtime-chatbox-f6jz.onrender.com/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

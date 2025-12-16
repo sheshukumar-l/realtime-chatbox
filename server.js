@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 
 const app = express();
 app.use(cors());
+app.use(express.static("public"));
 
 const server = http.createServer(app);
 
@@ -15,75 +16,95 @@ const io = new Server(server, {
   }
 });
 
-// In-memory rooms
-const privateRooms = {};
+const rooms = {}; // { roomCode: { password, users:Set } }
 
 io.on("connection", (socket) => {
-  console.log("Connected:", socket.id);
 
-  // GLOBAL CHAT
-  socket.on("join-global", (username) => {
+  socket.on("joinGlobal", (username) => {
     socket.username = username;
+    socket.room = "global";
     socket.join("global");
 
     io.to("global").emit("message", {
       user: "System",
-      text: `${username} joined Global chat`
+      text: `${username} joined Global Chat`
     });
   });
 
-  socket.on("global-message", (text) => {
-    io.to("global").emit("message", {
-      user: socket.username,
-      text
-    });
-  });
-
-  // CREATE PRIVATE ROOM
-  socket.on("create-private", ({ username, password }, cb) => {
+  socket.on("createPrivateRoom", ({ username, password }, cb) => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    privateRooms[code] = {
+    rooms[code] = {
       password,
-      users: []
+      users: new Set()
     };
 
-    cb({ code });
-  });
-
-  // JOIN PRIVATE ROOM
-  socket.on("join-private", ({ username, code, password }, cb) => {
-    const room = privateRooms[code];
-
-    if (!room || room.password !== password) {
-      return cb({ error: "Invalid room or password" });
-    }
-
     socket.username = username;
+    socket.room = code;
+    rooms[code].users.add(socket.id);
     socket.join(code);
-    room.users.push(username);
+
+    cb({ code });
 
     io.to(code).emit("message", {
       user: "System",
-      text: `${username} joined private room`
+      text: `${username} created the room`
     });
-
-    cb({ success: true });
   });
 
-  socket.on("private-message", ({ code, text }) => {
+  socket.on("joinPrivateRoom", ({ username, code, password }, cb) => {
+    if (!rooms[code] || rooms[code].password !== password) {
+      return cb({ error: "Invalid room code or password" });
+    }
+
+    socket.username = username;
+    socket.room = code;
+    rooms[code].users.add(socket.id);
+    socket.join(code);
+
+    cb({ success: true });
+
     io.to(code).emit("message", {
+      user: "System",
+      text: `${username} joined the room`
+    });
+  });
+
+  socket.on("sendMessage", (text) => {
+    if (!socket.room) return;
+
+    io.to(socket.room).emit("message", {
       user: socket.username,
       text
     });
   });
 
+  socket.on("typing", (isTyping) => {
+    socket.to(socket.room).emit("typing", {
+      user: socket.username,
+      isTyping
+    });
+  });
+
+  socket.on("leaveRoom", () => {
+    if (!socket.room) return;
+
+    socket.leave(socket.room);
+    socket.to(socket.room).emit("message", {
+      user: "System",
+      text: `${socket.username} left the room`
+    });
+
+    socket.room = null;
+  });
+
   socket.on("disconnect", () => {
-    console.log("Disconnected:", socket.id);
+    if (socket.room && rooms[socket.room]) {
+      rooms[socket.room].users.delete(socket.id);
+    }
   });
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () =>
-  console.log("Server running on", PORT)
-);
+server.listen(process.env.PORT || 3000, () => {
+  console.log("Server running");
+});
