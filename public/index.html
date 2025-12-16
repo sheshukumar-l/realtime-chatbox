@@ -3,50 +3,94 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Real-Time Chat</title>
+  <title>Realtime Chat</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <div id="app">
+  <!-- JOIN SCREEN -->
+  <div id="joinScreen" class="screen active">
+    <h2>Join Chat</h2>
 
-    <!-- JOIN SCREEN -->
-    <div id="joinScreen" class="screen active">
-      <h2>Join Chat</h2>
+    <input id="usernameInput" placeholder="Your name" />
 
-      <input id="usernameInput" placeholder="Your name" />
+    <button id="joinGlobalBtn">Join Global Chat</button>
 
-      <button id="joinGlobalBtn">Join Global Chat</button>
+    <hr />
 
-      <hr />
+    <h3>Private Room</h3>
+    <input id="privateCodeInput" placeholder="6-digit room code" />
+    <input id="privatePasswordInput" placeholder="Room password" type="password" />
 
-      <input id="privateCodeInput" placeholder="Private room code (6 digits)" />
-      <button id="joinPrivateBtn">Join Private Room</button>
-
-      <hr />
-
-      <input id="privatePasswordInput" placeholder="Private room password" />
-      <button id="createPrivateBtn">Create Private Room</button>
-    </div>
-
-    <!-- CHAT SCREEN -->
-    <div id="chatScreen" class="screen">
-      <header>
-        <span id="roomTitle">Global</span>
-        <button id="leaveBtn">Exit</button>
-      </header>
-
-      <div id="messages"></div>
-
-      <div id="composer">
-        <input id="msgInput" placeholder="Type a message..." />
-        <button id="sendBtn">Send</button>
-      </div>
-    </div>
-
+    <button id="joinPrivateBtn">Join Private Room</button>
+    <button id="createPrivateBtn">Create Private Room</button>
   </div>
 
-  <!-- 🔥 SOCKET.IO CLIENT (MUST BE FIRST) -->
+  <!-- CHAT SCREEN -->
+  <div id="chatScreen" class="screen">
+    <header>
+      <span id="roomTitle">Global</span>
+      <button id="leaveBtn">Exit</button>
+    </header>
+
+    <div id="messages"></div>
+
+    <div id="composer">
+      <input id="msgInput" placeholder="Type a message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <!-- ✅ SOCKET.IO CLIENT (VERY IMPORTANT) -->
+  <script src="https://realtime-chatbox-f6jz.onrender.com/socket.io/socket.io.js"></script>
+
+  <!-- YOUR SCRIPT -->
+  <script src="script.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Realtime Chat</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- JOIN SCREEN -->
+  <div id="joinScreen" class="screen active">
+    <h2>Join Chat</h2>
+
+    <input id="usernameInput" placeholder="Your name" />
+
+    <button id="joinGlobalBtn">Join Global Chat</button>
+
+    <hr />
+
+    <h3>Private Room</h3>
+    <input id="privateCodeInput" placeholder="6-digit room code" />
+    <input id="privatePasswordInput" placeholder="Room password" type="password" />
+
+    <button id="joinPrivateBtn">Join Private Room</button>
+    <button id="createPrivateBtn">Create Private Room</button>
+  </div>
+
+  <!-- CHAT SCREEN -->
+  <div id="chatScreen" class="screen">
+    <header>
+      <span id="roomTitle">Global</span>
+      <button id="leaveBtn">Exit</button>
+    </header>
+
+    <div id="messages"></div>
+
+    <div id="composer">
+      <input id="msgInput" placeholder="Type a message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <!-- ✅ SOCKET.IO CLIENT (VERY IMPORTANT) -->
   <script src="https://realtime-chatbox-f6jz.onrender.com/socket.io/socket.io.js"></script>
 
   <!-- YOUR SCRIPT -->
