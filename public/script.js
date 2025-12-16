@@ -1,105 +1,92 @@
 const BACKEND = "https://realtime-chatbox-f6jz.onrender.com";
 const socket = io(BACKEND);
 
-/* Screens */
 const joinScreen = document.getElementById("joinScreen");
 const chatScreen = document.getElementById("chatScreen");
 
-/* Inputs */
-const usernameInput = document.getElementById("usernameInput");
-const msgInput = document.getElementById("msgInput");
-const privateCodeInput = document.getElementById("privateCodeInput");
-const privatePasswordInput = document.getElementById("privatePasswordInput");
+const usernameInput = document.getElementById("username");
+const joinGlobalBtn = document.getElementById("joinGlobal");
+const createPrivateBtn = document.getElementById("createPrivate");
+const joinPrivateBtn = document.getElementById("joinPrivate");
 
-/* Buttons */
-const joinGlobalBtn = document.getElementById("joinGlobalBtn");
-const joinPrivateBtn = document.getElementById("joinPrivateBtn");
-const createPrivateBtn = document.getElementById("createPrivateBtn");
-const sendBtn = document.getElementById("sendBtn");
-const leaveBtn = document.getElementById("leaveBtn");
+const roomCodeInput = document.getElementById("roomCode");
+const roomPassInput = document.getElementById("roomPass");
 
-/* UI */
-const messagesDiv = document.getElementById("messages");
 const roomTitle = document.getElementById("roomTitle");
+const messages = document.getElementById("messages");
+const msgInput = document.getElementById("msgInput");
+const sendBtn = document.getElementById("sendBtn");
+const exitBtn = document.getElementById("exitBtn");
 
-let username = "";
 let currentRoom = "";
 
-/* Helpers */
-function showChat(room) {
-  joinScreen.classList.remove("active");
-  chatScreen.classList.add("active");
-  roomTitle.textContent = room;
-  messagesDiv.innerHTML = "";
-}
-
-function showJoin() {
-  chatScreen.classList.remove("active");
-  joinScreen.classList.add("active");
-}
-
-function addMessage(user, text, self) {
+function addMsg(user, text, self) {
   const div = document.createElement("div");
-  div.className = "msg " + (self ? "self" : "");
-  div.innerHTML = `<strong>${user}</strong>: ${text}`;
-  messagesDiv.appendChild(div);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  div.className = "msg " + (self ? "self" : "other");
+  div.textContent = `${user}: ${text}`;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
 }
 
-/* Join Global */
 joinGlobalBtn.onclick = () => {
-  username = usernameInput.value.trim();
-  if (!username) return alert("Enter username");
+  const name = usernameInput.value.trim();
+  if (!name) return alert("Enter name");
 
   currentRoom = "global";
-  socket.emit("joinGlobal", username);
-  showChat("Global");
+  socket.emit("joinGlobal", name);
+
+  joinScreen.classList.add("hidden");
+  chatScreen.classList.remove("hidden");
+  roomTitle.textContent = "Global Chat";
 };
 
-/* Create Private Room */
 createPrivateBtn.onclick = () => {
-  username = usernameInput.value.trim();
-  if (!username) return alert("Enter username");
+  const name = usernameInput.value.trim();
+  if (!name) return alert("Enter name");
 
-  socket.emit("createPrivate", username, (res) => {
+  socket.emit("createPrivate", name, (res) => {
     alert(`Room Code: ${res.code}\nPassword: ${res.password}`);
     currentRoom = res.code;
-    showChat("Private Room");
+
+    joinScreen.classList.add("hidden");
+    chatScreen.classList.remove("hidden");
+    roomTitle.textContent = `Private Room ${res.code}`;
   });
 };
 
-/* Join Private Room */
 joinPrivateBtn.onclick = () => {
-  username = usernameInput.value.trim();
-  const code = privateCodeInput.value.trim();
-  const pass = privatePasswordInput.value.trim();
+  socket.emit(
+    "joinPrivate",
+    {
+      username: usernameInput.value,
+      code: roomCodeInput.value,
+      password: roomPassInput.value,
+    },
+    (res) => {
+      if (!res.ok) return alert(res.msg);
 
-  if (!username || !code || !pass) return alert("Fill all fields");
-
-  socket.emit("joinPrivate", { username, code, pass }, (res) => {
-    if (!res.ok) return alert(res.error);
-    currentRoom = code;
-    showChat("Private Room");
-  });
+      currentRoom = roomCodeInput.value;
+      joinScreen.classList.add("hidden");
+      chatScreen.classList.remove("hidden");
+      roomTitle.textContent = `Private Room ${currentRoom}`;
+    }
+  );
 };
 
-/* Send Message */
 sendBtn.onclick = () => {
-  const text = msgInput.value.trim();
-  if (!text) return;
-
-  socket.emit("chatMessage", { room: currentRoom, text });
-  addMessage(username, text, true);
+  if (!msgInput.value) return;
+  socket.emit("chatMessage", { room: currentRoom, text: msgInput.value });
+  addMsg("You", msgInput.value, true);
   msgInput.value = "";
 };
 
-/* Leave Room */
-leaveBtn.onclick = () => {
-  socket.emit("leaveRoom", currentRoom);
-  showJoin();
-};
-
-/* Receive Message */
-socket.on("chatMessage", ({ user, text }) => {
-  addMessage(user, text, false);
+socket.on("chatMessage", (data) => {
+  addMsg(data.user, data.text, false);
 });
+
+exitBtn.onclick = () => {
+  socket.emit("leaveRoom", currentRoom);
+  chatScreen.classList.add("hidden");
+  joinScreen.classList.remove("hidden");
+  messages.innerHTML = "";
+};

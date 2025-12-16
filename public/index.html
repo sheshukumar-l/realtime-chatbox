@@ -2,49 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Realtime Chat</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
-
 <body>
-  <!-- JOIN SCREEN -->
-  <div id="joinScreen" class="screen active">
-    <h2>Join Chat</h2>
 
-    <input id="usernameInput" placeholder="Your name" />
+<div id="joinScreen">
+  <h2>Join Chat</h2>
+  <input id="username" placeholder="Username"/>
+  <button id="joinGlobal">Join Global</button>
 
-    <button id="joinGlobalBtn">Join Global Chat</button>
+  <hr/>
 
-    <hr />
+  <button id="createPrivate">Create Private Room</button>
+  <input id="roomCode" placeholder="Room Code"/>
+  <input id="roomPass" placeholder="Password"/>
+  <button id="joinPrivate">Join Private</button>
+</div>
 
-    <h3>Private Room</h3>
-    <input id="privateCodeInput" placeholder="6-digit room code" />
-    <input id="privatePasswordInput" placeholder="Room password" type="password" />
-
-    <button id="joinPrivateBtn">Join Private Room</button>
-    <button id="createPrivateBtn">Create Private Room</button>
+<div id="chatScreen" class="hidden">
+  <div class="header">
+    <span id="roomTitle"></span>
+    <button id="exitBtn">Exit</button>
   </div>
 
-  <!-- CHAT SCREEN -->
-  <div id="chatScreen" class="screen">
-    <header>
-      <span id="roomTitle">Global</span>
-      <button id="leaveBtn">Exit</button>
-    </header>
+  <div id="messages"></div>
 
-    <div id="messages"></div>
-
-    <div id="composer">
-      <input id="msgInput" placeholder="Type a message..." />
-      <button id="sendBtn">Send</button>
-    </div>
+  <div class="inputBox">
+    <input id="msgInput" placeholder="Type message"/>
+    <button id="sendBtn">Send</button>
   </div>
+</div>
 
-  <!-- ✅ SOCKET.IO CLIENT (VERY IMPORTANT) -->
-  <script src="https://realtime-chatbox-f6jz.onrender.com/socket.io/socket.io.js"></script>
-
-  <!-- YOUR SCRIPT -->
-  <script src="script.js"></script>
+<!-- SOCKET.IO CLIENT -->
+<script src="https://realtime-chatbox-f6jz.onrender.com/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

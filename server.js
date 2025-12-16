@@ -1,24 +1,21 @@
 const express = require("express");
 const http = require("http");
-const { Server } = require("socket.io");
 const cors = require("cors");
+const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
 
-/* ✅ CORS CONFIG (VERY IMPORTANT) */
+/* CORS */
 app.use(
   cors({
     origin: [
       "https://realtimechatbox.netlify.app",
       "http://localhost:5500",
-      "http://127.0.0.1:5500",
     ],
-    methods: ["GET", "POST"],
   })
 );
 
-/* Socket.IO with CORS */
 const io = new Server(server, {
   cors: {
     origin: [
@@ -29,38 +26,35 @@ const io = new Server(server, {
   },
 });
 
-/* Room storage */
+/* Storage */
 const privateRooms = {};
 
-/* SOCKET LOGIC */
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+  console.log("Connected:", socket.id);
 
-  /* Global chat */
   socket.on("joinGlobal", (username) => {
     socket.username = username;
     socket.join("global");
+    io.to("global").emit("notice", `${username} joined global chat`);
   });
 
-  /* Create private room */
   socket.on("createPrivate", (username, cb) => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     const password = Math.random().toString(36).slice(2, 8);
 
-    privateRooms[code] = { password };
+    privateRooms[code] = password;
     socket.username = username;
     socket.join(code);
 
     cb({ code, password });
   });
 
-  /* Join private room */
-  socket.on("joinPrivate", ({ username, code, pass }, cb) => {
+  socket.on("joinPrivate", ({ username, code, password }, cb) => {
     if (!privateRooms[code]) {
-      return cb({ ok: false, error: "Room not found" });
+      return cb({ ok: false, msg: "Room not found" });
     }
-    if (privateRooms[code].password !== pass) {
-      return cb({ ok: false, error: "Wrong password" });
+    if (privateRooms[code] !== password) {
+      return cb({ ok: false, msg: "Wrong password" });
     }
 
     socket.username = username;
@@ -68,7 +62,6 @@ io.on("connection", (socket) => {
     cb({ ok: true });
   });
 
-  /* Chat messages */
   socket.on("chatMessage", ({ room, text }) => {
     socket.to(room).emit("chatMessage", {
       user: socket.username,
@@ -76,7 +69,6 @@ io.on("connection", (socket) => {
     });
   });
 
-  /* Leave room */
   socket.on("leaveRoom", (room) => {
     socket.leave(room);
   });
@@ -86,8 +78,7 @@ io.on("connection", (socket) => {
   });
 });
 
-/* Server start */
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
+server.listen(PORT, () =>
+  console.log(`Server running on port ${PORT}`)
+);
