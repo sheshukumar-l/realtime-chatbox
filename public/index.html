@@ -2,54 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Real-Time Chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Realtime Chat</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+  <div id="app">
 
-<div id="app">
-
-  <!-- SIDEBAR -->
-  <aside id="sidebar" class="show">
-    <h2 class="logo">ChatBox</h2>
-
-    <div class="section">
+    <!-- JOIN SCREEN -->
+    <div id="joinScreen" class="card">
+      <h2>Join Chat</h2>
       <input id="usernameInput" placeholder="Your name" />
-      <input id="roomInput" placeholder="Room name (optional)" />
-      <button id="joinGlobalBtn">Join Global</button>
-      <button id="joinRoomBtn">Join Private Room</button>
+      <input id="roomInput" placeholder="Room name (global / private)" />
+      <button id="joinBtn">Join</button>
     </div>
 
-    <div class="rooms">
-      <h3>Rooms</h3>
-      <ul id="roomList">
-        <li class="active">🌍 Global</li>
-      </ul>
+    <!-- CHAT SCREEN -->
+    <div id="chatScreen" class="card hidden">
+      <div class="header">
+        <span id="roomTitle"></span>
+      </div>
+
+      <div id="messages"></div>
+
+      <div class="composer">
+        <input id="msgInput" placeholder="Type a message..." />
+        <button id="sendBtn">Send</button>
+      </div>
     </div>
-  </aside>
 
-  <!-- CHAT -->
-  <main id="chat">
-    <header class="chat-header">
-      <button id="toggleSidebar" class="mobile-btn">☰</button>
-      <h3 id="currentRoom">Global</h3>
-    </header>
+  </div>
 
-    <div id="messages"></div>
-    <div id="typingIndicator"></div>
-
-    <div class="composer">
-      <input id="msgInput" placeholder="Type a message..." />
-      <button id="sendBtn">Send</button>
-    </div>
-  </main>
-
-</div>
-
-<!-- SOCKET.IO -->
-<script src="https://realtime-chatbox-f6jz.onrender.com/socket.io/socket.io.js"></script>
-<script src="script.js"></script>
-
+  <!-- SOCKET.IO -->
+  <script src="https://realtime-chatbox-f6jz.onrender.com/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

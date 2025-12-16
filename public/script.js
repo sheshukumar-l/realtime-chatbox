@@ -1,77 +1,79 @@
-const socket = io("https://realtime-chatbox-f6jz.onrender.com");
+const BACKEND = "https://realtime-chatbox-f6jz.onrender.com";
+const socket = io(BACKEND);
 
-const sidebar = document.getElementById("sidebar");
-const chat = document.getElementById("chat");
-
-const toggleSidebar = document.getElementById("toggleSidebar");
-const joinGlobalBtn = document.getElementById("joinGlobalBtn");
-const joinRoomBtn = document.getElementById("joinRoomBtn");
-
+// UI Elements
+const joinScreen = document.getElementById("joinScreen");
+const chatScreen = document.getElementById("chatScreen");
 const usernameInput = document.getElementById("usernameInput");
 const roomInput = document.getElementById("roomInput");
+const joinBtn = document.getElementById("joinBtn");
 
-const currentRoomEl = document.getElementById("currentRoom");
+const roomTitle = document.getElementById("roomTitle");
 const messagesDiv = document.getElementById("messages");
 const msgInput = document.getElementById("msgInput");
 const sendBtn = document.getElementById("sendBtn");
 
 let username = "";
-let room = "global";
+let room = "";
 
-/* MOBILE TOGGLE */
-toggleSidebar.addEventListener("click", () => {
-  sidebar.classList.toggle("hide");
-});
-
-/* JOIN GLOBAL */
-joinGlobalBtn.addEventListener("click", () => {
-  joinRoom("global");
-});
-
-/* JOIN PRIVATE */
-joinRoomBtn.addEventListener("click", () => {
-  const privateRoom = roomInput.value.trim();
-  if (!privateRoom) return alert("Enter room name");
-  joinRoom(privateRoom);
-});
-
-function joinRoom(roomName) {
+// Join room
+joinBtn.onclick = () => {
   username = usernameInput.value.trim();
+  room = roomInput.value.trim() || "global";
+
   if (!username) return alert("Enter username");
 
-  room = roomName;
   socket.emit("joinRoom", { username, room });
 
-  currentRoomEl.textContent = roomName === "global" ? "🌍 Global" : roomName;
-  messagesDiv.innerHTML = "";
+  roomTitle.textContent = room;
+  joinScreen.classList.add("hidden");
+  chatScreen.classList.remove("hidden");
+};
 
-  sidebar.classList.add("hide");
-  chat.classList.add("show");
-}
-
-/* SEND MESSAGE */
-sendBtn.addEventListener("click", sendMessage);
-msgInput.addEventListener("keydown", e => {
+// Send message
+sendBtn.onclick = sendMessage;
+msgInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
 function sendMessage() {
   const text = msgInput.value.trim();
   if (!text) return;
-  socket.emit("chatMessage", { room, username, text });
+
+  socket.emit("chatMessage", {
+    room,
+    username,
+    text
+  });
+
   msgInput.value = "";
 }
 
-/* RECEIVE */
-socket.on("chatMessage", data => {
-  addMessage(data.username, data.text, data.username === username);
+// Receive chat message
+socket.on("chatMessage", ({ username: user, text }) => {
+  addMessage(user, text, user === username);
 });
 
-/* UI */
+// System messages
+socket.on("systemMessage", (msg) => {
+  addSystemMessage(msg);
+});
+
+// UI helpers
 function addMessage(user, text, self) {
+  if (!text) return;
+
   const div = document.createElement("div");
   div.className = "msg" + (self ? " self" : "");
   div.innerHTML = `<strong>${user}</strong>: ${text}`;
+  messagesDiv.appendChild(div);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function addSystemMessage(text) {
+  const div = document.createElement("div");
+  div.className = "system-msg";
+  div.textContent = text;
   messagesDiv.appendChild(div);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
