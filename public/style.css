@@ -1,78 +1,65 @@
 * {
   box-sizing: border-box;
-  font-family: system-ui, sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 body {
   margin: 0;
-  background: linear-gradient(135deg, #0f172a, #020617);
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: #0f172a;
+  color: white;
 }
 
 #app {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.screen {
+  display: none;
   width: 100%;
   max-width: 420px;
-  padding: 10px;
+  height: 100%;
+  padding: 16px;
 }
 
-.card {
-  background: #0b1220;
-  color: #fff;
-  border-radius: 14px;
-  padding: 16px;
+.screen.active {
   display: flex;
   flex-direction: column;
-  height: 90vh;
-  animation: fadeIn 0.4s ease;
 }
 
-.hidden {
-  display: none;
-}
-
-h2 {
-  text-align: center;
-}
-
-input {
+input, button {
   padding: 12px;
   margin: 6px 0;
   border-radius: 8px;
   border: none;
-  outline: none;
 }
 
 button {
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
   background: #2563eb;
   color: white;
-  font-weight: bold;
   cursor: pointer;
 }
 
-.header {
-  text-align: center;
-  font-weight: bold;
-  padding-bottom: 10px;
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 #messages {
   flex: 1;
   overflow-y: auto;
-  padding: 6px;
+  padding: 10px;
 }
 
 .msg {
   background: #1e293b;
-  padding: 8px 10px;
-  border-radius: 10px;
-  margin: 6px 0;
-  max-width: 85%;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
 }
 
 .msg.self {
@@ -80,44 +67,18 @@ button {
   align-self: flex-end;
 }
 
-.system-msg {
-  text-align: center;
-  font-size: 12px;
-  opacity: 0.6;
-  margin: 6px 0;
-}
-
-.composer {
+#composer {
   display: flex;
   gap: 6px;
 }
 
-.composer input {
+#composer input {
   flex: 1;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-/* MOBILE FIX */
+/* Mobile fix */
 @media (max-width: 600px) {
   #app {
-    max-width: 100%;
+    align-items: stretch;
   }
-}
-
-.leave-btn {
-  background: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.leave-btn:hover {
-  background: #e63b3b;
 }
