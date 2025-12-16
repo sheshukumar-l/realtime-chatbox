@@ -1,0 +1,71 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: #0f172a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+#app {
+  width: 100%;
+  max-width: 500px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#join, #chat {
+  padding: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  background: #2563eb;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  background: #020617;
+  padding: 10px;
+}
+
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+#messages div {
+  margin-bottom: 6px;
+}
+
+.bottom {
+  display: flex;
+}
+
+.bottom input {
+  flex: 1;
+}
