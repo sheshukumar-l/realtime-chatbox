@@ -1,50 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Realtime Chat</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div id="app">
+<div class="app">
 
   <!-- JOIN SCREEN -->
-  <div id="join">
-    <h2>Realtime Chat</h2>
+  <div id="join" class="screen active fade-in">
+    <div class="card">
+      <h1>💬 <Realtime-ChatBox></Realtime-ChatBox></h1>
+      <p class="subtitle">Connect instantly with anyone</p>
 
-    <input id="username" placeholder="Your name">
+      <input id="username" placeholder="Your username" />
 
-    <button id="joinGlobal">Join Global</button>
+      <button id="joinGlobal" class="primary">Join Global Chat</button>
 
-    <hr>
+      <div class="divider">OR</div>
 
-    <input id="roomPassword" placeholder="Private room password">
-    <button id="createRoom">Create Private Room</button>
+      <input id="roomPassword" placeholder="Private room password" />
+      <button id="createRoom">Create Private Room</button>
 
-    <input id="roomCode" placeholder="Room code">
-    <button id="joinRoom">Join Private Room</button>
+      <input id="roomCode" placeholder="Enter room code" />
+      <button id="joinRoom">Join Private Room</button>
+    </div>
   </div>
 
   <!-- CHAT SCREEN -->
-  <div id="chat" class="hidden">
-    <div class="top">
-      <span id="roomTitle"></span>
-      <button id="exit">Exit</button>
+  <div id="chat" class="screen fade-in hidden">
+    <div class="chat-header">
+      <span id="roomTitle">Global Chat</span>
+      <button id="exit" class="exit">Exit</button>
     </div>
 
-    <div id="messages"></div>
+    <div id="messages" class="messages"></div>
 
-    <div class="bottom">
-      <input id="msg" placeholder="Type message">
+    <div class="chat-input">
+      <input id="msg" placeholder="Type your message..." />
       <button id="send">Send</button>
     </div>
   </div>
 
 </div>
 
-<!-- IMPORTANT: Socket.IO CDN -->
+<!-- Socket.IO -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script src="script.js"></script>
 </body>
