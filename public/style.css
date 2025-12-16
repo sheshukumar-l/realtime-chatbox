@@ -1,26 +1,19 @@
 * {
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family: system-ui, sans-serif;
 }
 
 body {
   margin: 0;
   background: #0f172a;
   color: white;
-}
-
-#app {
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
+/* Screens */
 .screen {
   display: none;
-  width: 100%;
-  max-width: 420px;
-  height: 100%;
+  height: 100vh;
   padding: 16px;
 }
 
@@ -29,24 +22,27 @@ body {
   flex-direction: column;
 }
 
-input, button {
+/* Join Screen */
+#joinScreen input,
+#joinScreen button {
+  margin: 8px 0;
   padding: 12px;
-  margin: 6px 0;
-  border-radius: 8px;
-  border: none;
+  font-size: 16px;
 }
 
-button {
+#joinScreen button {
   background: #2563eb;
   color: white;
-  cursor: pointer;
+  border: none;
+  border-radius: 6px;
 }
 
+/* Chat Screen */
 header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+  padding: 12px;
+  background: #020617;
 }
 
 #messages {
@@ -59,26 +55,37 @@ header {
   background: #1e293b;
   padding: 8px;
   border-radius: 6px;
-  margin-bottom: 6px;
+  margin: 6px 0;
+  max-width: 80%;
 }
 
 .msg.self {
   background: #2563eb;
-  align-self: flex-end;
+  margin-left: auto;
 }
 
 #composer {
   display: flex;
-  gap: 6px;
+  padding: 10px;
+  gap: 8px;
 }
 
 #composer input {
   flex: 1;
+  padding: 10px;
 }
 
-/* Mobile fix */
+#composer button {
+  padding: 10px 16px;
+  background: #2563eb;
+  border: none;
+  color: white;
+  border-radius: 6px;
+}
+
+/* Mobile Fix */
 @media (max-width: 600px) {
-  #app {
-    align-items: stretch;
+  .msg {
+    max-width: 95%;
   }
 }
