@@ -1,73 +1,92 @@
-const socket = io("https://realtime-chatbox-f6jz.onrender.com");
+const BACKEND = "https://realtime-chatbox-f6jz.onrender.com";
+const socket = io(BACKEND);
 
-const join = document.getElementById("join");
-const chat = document.getElementById("chat");
-
-const usernameInput = document.getElementById("username");
+/* ---------- ELEMENTS ---------- */
+const messagesDiv = document.getElementById("messages");
 const msgInput = document.getElementById("msgInput");
-const messages = document.getElementById("messages");
+const sendBtn = document.getElementById("sendBtn");
+const exitBtn = document.getElementById("exitBtn");
 const roomTitle = document.getElementById("roomTitle");
-const typingDiv = document.getElementById("typing");
 
-document.getElementById("globalBtn").onclick = () => {
-  socket.emit("joinGlobal", usernameInput.value);
-  startChat("Global Chat");
-};
+/* ---------- STATE ---------- */
+let username = "";
+let currentRoom = "";
 
-document.getElementById("createRoom").onclick = () => {
-  socket.emit("createPrivateRoom", {
-    username: usernameInput.value,
-    password: document.getElementById("roomPassword").value
-  }, res => {
-    alert("Room Code: " + res.code);
-    startChat("Private Room " + res.code);
-  });
-};
+/* ---------- HELPERS ---------- */
+function clearMessages() {
+  messagesDiv.innerHTML = "";
+}
 
-document.getElementById("joinRoom").onclick = () => {
-  socket.emit("joinPrivateRoom", {
-    username: usernameInput.value,
-    code: document.getElementById("roomCode").value,
-    password: document.getElementById("roomPassword").value
-  }, res => {
-    if (res.error) alert(res.error);
-    else startChat("Private Room");
-  });
-};
+function scrollBottom() {
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 
-document.getElementById("sendBtn").onclick = () => {
-  if (!msgInput.value) return;
-  socket.emit("sendMessage", msgInput.value);
-  msgInput.value = "";
-};
-
-document.getElementById("exitBtn").onclick = () => {
-  socket.emit("leaveRoom");
-  chat.classList.add("hidden");
-  join.classList.remove("hidden");
-};
-
-socket.on("message", data => {
+function addSystem(text) {
   const div = document.createElement("div");
+  div.className = "system";
+  div.textContent = text;
+  messagesDiv.appendChild(div);
+  scrollBottom();
+}
 
-  if (data.user === "System") {
-    div.className = "system";
-    div.innerText = data.text;
-  } else {
-    div.className = "msg " + (data.user === usernameInput.value ? "me" : "other");
-    div.innerText = `${data.user}: ${data.text}`;
-  }
+function addMessage(user, text, isSelf) {
+  const div = document.createElement("div");
+  div.className = `msg ${isSelf ? "self" : "other"}`;
+  div.innerHTML = `<strong>${user}</strong><br>${text}`;
+  messagesDiv.appendChild(div);
+  scrollBottom();
+}
 
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
+/* ---------- SEND MESSAGE ---------- */
+sendBtn.addEventListener("click", () => {
+  const msg = msgInput.value.trim();
+  if (!msg || !currentRoom) return;
+
+  socket.emit("sendMessage", {
+    room: currentRoom,
+    message: msg
+  });
+
+  msgInput.value = "";
 });
 
-socket.on("typing", d => {
-  typingDiv.innerText = d.isTyping ? `${d.user} typing...` : "";
+msgInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendBtn.click();
 });
 
-function startChat(title) {
-  roomTitle.innerText = title;
-  join.classList.add("hidden");
-  chat.classList.remove("hidden");
+/* ---------- EXIT ROOM ---------- */
+exitBtn.addEventListener("click", () => {
+  socket.emit("leaveRoom", currentRoom);
+  currentRoom = "";
+  clearMessages();
+  roomTitle.textContent = "Not in a room";
+});
+
+/* ---------- SOCKET EVENTS ---------- */
+socket.on("system", (text) => {
+  addSystem(text);
+});
+
+socket.on("message", ({ user, message }) => {
+  addMessage(user, message, user === username);
+});
+
+/* ---------- JOIN GLOBAL ---------- */
+function joinGlobal(name) {
+  username = name;
+  currentRoom = "global";
+  clearMessages();
+  roomTitle.textContent = "🌍 Global Chat";
+  socket.emit("joinGlobal", username);
+}
+
+/* ---------- PRIVATE ROOM ---------- */
+function joinPrivate(name, code, password) {
+  username = name;
+  clearMessages();
+  socket.emit("joinPrivateRoom", { username, code, password }, (res) => {
+    if (!res.ok) return alert(res.error);
+    currentRoom = code;
+    roomTitle.textContent = "🔒 Private Room";
+  });
 }
