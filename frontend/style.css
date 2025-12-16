@@ -1,75 +1,191 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  background: #0f172a;
-  font-family: Arial, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
+  background: linear-gradient(135deg, #020617, #0f172a);
   color: white;
-}
-
-.hidden { display: none; }
-
-#join {
-  padding: 20px;
-  max-width: 400px;
-  margin: auto;
-}
-
-#join input, #join button {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0;
-}
-
-#chat {
   height: 100vh;
+}
+
+.app {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- JOIN CARD ---------- */
+.card {
+  background: rgba(2, 6, 23, 0.9);
+  padding: 30px;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  animation: fadeIn 0.6s ease;
+}
+
+.card h1 {
+  margin: 0;
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+  color: #94a3b8;
+  margin-bottom: 20px;
+}
+
+.card input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: none;
+  background: #020617;
+  color: white;
+  outline: none;
+}
+
+.card button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: none;
+  background: #1e293b;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card button:hover {
+  background: #334155;
+}
+
+.primary {
+  background: #2563eb !important;
+}
+
+.primary:hover {
+  background: #1d4ed8 !important;
+}
+
+.divider {
+  text-align: center;
+  margin: 14px 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ---------- CHAT ---------- */
+.chat {
+  height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  background: #020617;
+.hidden {
+  display: none;
 }
 
-#messages {
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: #020617;
+  border-bottom: 1px solid #1e293b;
+}
+
+.chat-header h3 {
+  margin: 0;
+}
+
+.typing {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.danger {
+  background: #dc2626;
+  border: none;
+  padding: 8px 14px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.messages {
   flex: 1;
-  padding: 10px;
+  padding: 16px;
   overflow-y: auto;
 }
 
 .msg {
   max-width: 70%;
-  padding: 8px;
+  padding: 10px 14px;
   margin: 6px 0;
-  border-radius: 8px;
+  border-radius: 14px;
+  font-size: 14px;
 }
 
 .me {
   background: #2563eb;
   margin-left: auto;
+  border-bottom-right-radius: 4px;
 }
 
 .other {
   background: #1e293b;
+  border-bottom-left-radius: 4px;
 }
 
 .system {
   text-align: center;
   font-size: 12px;
-  opacity: 0.7;
+  color: #94a3b8;
+  margin: 10px 0;
 }
 
-#inputArea {
+.input-area {
   display: flex;
-  padding: 10px;
+  padding: 14px;
+  background: #020617;
+  gap: 10px;
 }
 
-#inputArea input {
+.input-area input {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: #0f172a;
+  color: white;
 }
 
-#inputArea button {
-  padding: 10px;
+/* ---------- ANIMATIONS ---------- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 600px) {
+  .card {
+    border-radius: 0;
+    height: 100vh;
+    max-width: none;
+  }
 }
