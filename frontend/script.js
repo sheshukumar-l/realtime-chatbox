@@ -69,7 +69,18 @@ sendBtn.onclick = () => {
 
 socket.on("message", (msg) => {
   const div = document.createElement("div");
-  div.textContent = `${msg.user}: ${msg.text}`;
+
+  if (msg.user === "System") {
+    div.className = "message system";
+    div.textContent = msg.text;
+  } else if (msg.user === usernameInput.value) {
+    div.className = "message me";
+    div.textContent = msg.text;
+  } else {
+    div.className = "message other";
+    div.textContent = `${msg.user}: ${msg.text}`;
+  }
+
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
 });
