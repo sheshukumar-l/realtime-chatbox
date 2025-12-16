@@ -16,50 +16,119 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.static("public"));
 
-const rooms = {}; // { roomName: Set(socketId) }
+/**
+ * rooms structure:
+ * {
+ *   roomCode: {
+ *     password: "1234",
+ *     members: Set()
+ *   }
+ * }
+ */
+const rooms = {};
+
+// Utility: generate 6-digit room code
+function generateRoomCode() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
 io.on("connection", (socket) => {
   console.log("Connected:", socket.id);
 
-  socket.on("joinRoom", ({ username, room }) => {
-    if (!username || !room) return;
+  leaveRoomBtn.addEventListener("click", () => {
+  if (!room) return;
+
+  socket.emit("leaveRoom", { room, username });
+
+  // Reset UI
+  room = "";
+  messagesDiv.innerHTML = "";
+  roomTitle.textContent = "Not in a room";
+
+  chatScreen.classList.add("hidden");
+  entryScreen.classList.remove("hidden");
+});
+
+  // ✅ CREATE PRIVATE ROOM
+  socket.on("createPrivateRoom", ({ username, password }, cb) => {
+    if (!username || !password) {
+      return cb({ ok: false, msg: "Missing details" });
+    }
+
+    let roomCode;
+    do {
+      roomCode = generateRoomCode();
+    } while (rooms[roomCode]);
+
+    rooms[roomCode] = {
+      password,
+      members: new Set()
+    };
 
     socket.username = username;
-    socket.room = room;
+    socket.room = roomCode;
 
-    socket.join(room);
+    socket.join(roomCode);
+    rooms[roomCode].members.add(socket.id);
 
-    if (!rooms[room]) rooms[room] = new Set();
-    rooms[room].add(socket.id);
-
-    socket.emit("systemMessage", `You joined ${room}`);
-    socket.to(room).emit("systemMessage", `${username} joined the room`);
+    cb({ ok: true, roomCode });
+    socket.emit("systemMessage", `Private room created`);
   });
 
-  socket.on("chatMessage", ({ room, username, text }) => {
-    if (!text || !room) return;
+  // ✅ JOIN PRIVATE ROOM
+  socket.on("joinPrivateRoom", ({ username, roomCode, password }, cb) => {
+    const room = rooms[roomCode];
 
-    io.to(room).emit("chatMessage", {
-      username,
+    if (!room) {
+      return cb({ ok: false, msg: "Invalid room code" });
+    }
+
+    if (room.password !== password) {
+      return cb({ ok: false, msg: "Wrong password" });
+    }
+
+    socket.username = username;
+    socket.room = roomCode;
+
+    socket.join(roomCode);
+    room.members.add(socket.id);
+
+    socket.to(roomCode).emit(
+      "systemMessage",
+      `${username} joined the room`
+    );
+
+    cb({ ok: true });
+  });
+
+  // ✅ CHAT MESSAGE
+  socket.on("chatMessage", ({ text }) => {
+    if (!text || !socket.room) return;
+
+    io.to(socket.room).emit("chatMessage", {
+      username: socket.username,
       text
     });
   });
 
+  // ✅ DISCONNECT
   socket.on("disconnect", () => {
-    const room = socket.room;
-    if (room && rooms[room]) {
-      rooms[room].delete(socket.id);
-      socket.to(room).emit(
+    const roomCode = socket.room;
+    if (roomCode && rooms[roomCode]) {
+      rooms[roomCode].members.delete(socket.id);
+      socket.to(roomCode).emit(
         "systemMessage",
-        `${socket.username || "User"} left the room`
+        `${socket.username || "User"} left`
       );
-      if (rooms[room].size === 0) delete rooms[room];
+
+      if (rooms[roomCode].members.size === 0) {
+        delete rooms[roomCode];
+      }
     }
-    console.log("Disconnected:", socket.id);
   });
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () =>
-  console.log(`✅ Server running on PORT ${PORT}`)
+  console.log(`Server running on PORT ${PORT}`)
 );

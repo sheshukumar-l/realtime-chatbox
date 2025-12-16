@@ -18,10 +18,32 @@
       <button id="joinBtn">Join</button>
     </div>
 
+    <!-- PRIVATE ROOM SCREEN -->
+  <div id="privateRoomScreen" class="card">
+    <h2>Private Room</h2>
+
+    <input id="privateUsername" placeholder="Your name" />
+
+    <input id="roomPassword" placeholder="Room password" type="password" />
+
+    <button id="createPrivateBtn">Create Private Room</button>
+
+  <hr />
+
+    <input id="roomCodeInput" placeholder="6-digit room code" />
+    <input id="joinPasswordInput" placeholder="Room password" type="password" />
+
+  <button id="joinPrivateBtn">Join Private Room</button>
+
+  <p id="roomCodeDisplay"></p>
+</div>
+
     <!-- CHAT SCREEN -->
     <div id="chatScreen" class="card hidden">
       <div class="header">
         <span id="roomTitle"></span>
+
+        <button id="leaveRoomBtn" class="leave-btn">Leave</button>
       </div>
 
       <div id="messages"></div>

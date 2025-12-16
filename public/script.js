@@ -12,9 +12,21 @@ const roomTitle = document.getElementById("roomTitle");
 const messagesDiv = document.getElementById("messages");
 const msgInput = document.getElementById("msgInput");
 const sendBtn = document.getElementById("sendBtn");
+const leaveRoomBtn = document.getElementById("leaveRoomBtn");
 
 let username = "";
 let room = "";
+
+// Private room UI
+const privateRoomScreen = document.getElementById("privateRoomScreen");
+const privateUsername = document.getElementById("privateUsername");
+const roomPassword = document.getElementById("roomPassword");
+const createPrivateBtn = document.getElementById("createPrivateBtn");
+
+const roomCodeInput = document.getElementById("roomCodeInput");
+const joinPasswordInput = document.getElementById("joinPasswordInput");
+const joinPrivateBtn = document.getElementById("joinPrivateBtn");
+const roomCodeDisplay = document.getElementById("roomCodeDisplay");
 
 // Join room
 joinBtn.onclick = () => {
@@ -77,3 +89,63 @@ function addSystemMessage(text) {
   messagesDiv.appendChild(div);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
+
+// CREATE PRIVATE ROOM
+createPrivateBtn.addEventListener("click", () => {
+  const username = privateUsername.value.trim();
+  const password = roomPassword.value.trim();
+
+  if (!username || !password) {
+    return alert("Enter username and password");
+  }
+
+  socket.emit("createPrivateRoom", { username, password }, (res) => {
+    if (!res.ok) return alert(res.msg);
+
+    room = res.roomCode;
+    roomTitle.textContent = `Private Room: ${room}`;
+    roomCodeDisplay.textContent = `Room Code: ${room}`;
+
+    privateRoomScreen.classList.add("hidden");
+    chatScreen.classList.remove("hidden");
+  });
+});
+
+// JOIN PRIVATE ROOM
+joinPrivateBtn.addEventListener("click", () => {
+  const username = privateUsername.value.trim();
+  const roomCode = roomCodeInput.value.trim();
+  const password = joinPasswordInput.value.trim();
+
+  if (!username || !roomCode || !password) {
+    return alert("Fill all fields");
+  }
+
+  socket.emit(
+    "joinPrivateRoom",
+    { username, roomCode, password },
+    (res) => {
+      if (!res.ok) return alert(res.msg);
+
+      room = roomCode;
+      roomTitle.textContent = `Private Room: ${room}`;
+
+      privateRoomScreen.classList.add("hidden");
+      chatScreen.classList.remove("hidden");
+    }
+  );
+});
+
+leaveRoomBtn.addEventListener("click", () => {
+  if (!room) return;
+
+  socket.emit("leaveRoom", { room, username });
+
+  // Reset UI
+  room = "";
+  messagesDiv.innerHTML = "";
+  roomTitle.textContent = "Not in a room";
+
+  chatScreen.classList.add("hidden");
+  entryScreen.classList.remove("hidden");
+});

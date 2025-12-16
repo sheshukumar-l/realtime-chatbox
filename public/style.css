@@ -107,3 +107,17 @@ button {
     max-width: 100%;
   }
 }
+
+.leave-btn {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.leave-btn:hover {
+  background: #e63b3b;
+}
