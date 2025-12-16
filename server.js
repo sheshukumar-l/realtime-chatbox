@@ -4,73 +4,78 @@ const cors = require("cors");
 const { Server } = require("socket.io");
 
 const app = express();
-const server = http.createServer(app);
+app.use(cors());
 
-/* CORS */
-app.use(
-  cors({
-    origin: [
-      "https://realtimechatbox.netlify.app",
-      "http://localhost:5500",
-    ],
-  })
-);
+const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: [
-      "https://realtimechatbox.netlify.app",
-      "http://localhost:5500",
-    ],
-    methods: ["GET", "POST"],
-  },
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
 });
 
-/* Storage */
+// In-memory rooms
 const privateRooms = {};
 
 io.on("connection", (socket) => {
   console.log("Connected:", socket.id);
 
-  socket.on("joinGlobal", (username) => {
+  // GLOBAL CHAT
+  socket.on("join-global", (username) => {
     socket.username = username;
     socket.join("global");
-    io.to("global").emit("notice", `${username} joined global chat`);
-  });
 
-  socket.on("createPrivate", (username, cb) => {
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const password = Math.random().toString(36).slice(2, 8);
-
-    privateRooms[code] = password;
-    socket.username = username;
-    socket.join(code);
-
-    cb({ code, password });
-  });
-
-  socket.on("joinPrivate", ({ username, code, password }, cb) => {
-    if (!privateRooms[code]) {
-      return cb({ ok: false, msg: "Room not found" });
-    }
-    if (privateRooms[code] !== password) {
-      return cb({ ok: false, msg: "Wrong password" });
-    }
-
-    socket.username = username;
-    socket.join(code);
-    cb({ ok: true });
-  });
-
-  socket.on("chatMessage", ({ room, text }) => {
-    socket.to(room).emit("chatMessage", {
-      user: socket.username,
-      text,
+    io.to("global").emit("message", {
+      user: "System",
+      text: `${username} joined Global chat`
     });
   });
 
-  socket.on("leaveRoom", (room) => {
-    socket.leave(room);
+  socket.on("global-message", (text) => {
+    io.to("global").emit("message", {
+      user: socket.username,
+      text
+    });
+  });
+
+  // CREATE PRIVATE ROOM
+  socket.on("create-private", ({ username, password }, cb) => {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    privateRooms[code] = {
+      password,
+      users: []
+    };
+
+    cb({ code });
+  });
+
+  // JOIN PRIVATE ROOM
+  socket.on("join-private", ({ username, code, password }, cb) => {
+    const room = privateRooms[code];
+
+    if (!room || room.password !== password) {
+      return cb({ error: "Invalid room or password" });
+    }
+
+    socket.username = username;
+    socket.join(code);
+    room.users.push(username);
+
+    io.to(code).emit("message", {
+      user: "System",
+      text: `${username} joined private room`
+    });
+
+    cb({ success: true });
+  });
+
+  socket.on("private-message", ({ code, text }) => {
+    io.to(code).emit("message", {
+      user: socket.username,
+      text
+    });
   });
 
   socket.on("disconnect", () => {
@@ -80,5 +85,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
+  console.log("Server running on", PORT)
 );
