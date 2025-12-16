@@ -2,53 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Realtime Chat</title>
+  <title>Realtime ChatBox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+<div id="app">
 
-<div class="app">
-
-  <!-- JOIN SCREEN -->
-  <section id="join" class="card">
+  <!-- ===== JOIN SCREEN ===== -->
+  <div id="joinScreen" class="join-screen">
     <h1>Realtime ChatBox</h1>
     <p class="subtitle">Connect instantly. No signup.</p>
 
-    <input id="username" placeholder="Your username" />
+    <input id="usernameInput" placeholder="Your username" />
 
-    <button class="primary" id="globalBtn">Join Global Chat</button>
+    <button id="joinGlobalBtn" class="primary-btn">
+      🌍 Join Global Chat
+    </button>
 
     <div class="divider">OR</div>
 
-    <input id="roomPassword" placeholder="Room password" />
-    <button id="createRoom">Create Private Room</button>
+    <input id="roomPasswordInput" placeholder="Room password" />
+    <button id="createPrivateBtn" class="secondary-btn">
+      🔒 Create Private Room
+    </button>
 
-    <input id="roomCode" placeholder="Room code" />
-    <button id="joinRoom">Join Private Room</button>
-  </section>
+    <input id="roomCodeInput" placeholder="Room code" />
+    <button id="joinPrivateBtn" class="secondary-btn">
+      ➕ Join Private Room
+    </button>
+  </div>
 
-  <!-- CHAT SCREEN -->
-  <section id="chat" class="chat hidden">
-    <header class="chat-header">
-      <div>
-        <h3 id="roomTitle">Chat</h3>
-        <span id="typing" class="typing"></span>
-      </div>
-      <button id="exitBtn" class="danger">Exit</button>
-    </header>
+  <!-- ===== CHAT SCREEN ===== -->
+  <div id="chatScreen" class="hidden">
+    <div class="header">
+      <h2 id="roomTitle">Chat</h2>
+      <button id="exitBtn" class="exit-btn">Exit</button>
+    </div>
 
     <div id="messages" class="messages"></div>
 
-    <div class="input-area">
+    <div class="composer">
       <input id="msgInput" placeholder="Type a message..." />
-      <button id="sendBtn" class="primary">Send</button>
+      <button id="sendBtn" class="send-btn">➤</button>
     </div>
-  </section>
+  </div>
 
 </div>
 
-<script src="https://realtime-chatbox-f6jz.onrender.com/socket.io/socket.io.js"></script>
+<!-- SOCKET.IO -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
