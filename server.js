@@ -1,110 +1,108 @@
 const express = require("express");
 const http = require("http");
-const cors = require("cors");
 const { Server } = require("socket.io");
+const cors = require("cors");
 
 const app = express();
 app.use(cors());
-app.use(express.static("public"));
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "*", // allow Netlify frontend
     methods: ["GET", "POST"]
   }
 });
 
-const rooms = {}; // { roomCode: { password, users:Set } }
+/* =========================
+   IN-MEMORY STORAGE
+========================= */
+const privateRooms = {}; // code -> { password, users: [] }
 
+/* =========================
+   SOCKET HANDLING
+========================= */
 io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
 
-  socket.on("joinGlobal", (username) => {
+  /* JOIN GLOBAL CHAT */
+  socket.on("joinGlobal", ({ username }) => {
+    socket.join("global");
     socket.username = username;
     socket.room = "global";
-    socket.join("global");
 
-    io.to("global").emit("message", {
-      user: "System",
-      text: `${username} joined Global Chat`
-    });
+    io.to("global").emit("systemMessage", `${username} joined Global Chat`);
   });
 
-  socket.on("createPrivateRoom", ({ username, password }, cb) => {
+  /* CREATE PRIVATE ROOM */
+  socket.on("createPrivate", ({ username, password }) => {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    rooms[code] = {
+    privateRooms[code] = {
       password,
-      users: new Set()
+      users: [socket.id]
     };
 
+    socket.join(code);
     socket.username = username;
     socket.room = code;
-    rooms[code].users.add(socket.id);
-    socket.join(code);
 
-    cb({ code });
-
-    io.to(code).emit("message", {
-      user: "System",
-      text: `${username} created the room`
-    });
+    socket.emit("privateCreated", { code });
+    io.to(code).emit("systemMessage", `${username} created the room`);
   });
 
-  socket.on("joinPrivateRoom", ({ username, code, password }, cb) => {
-    if (!rooms[code] || rooms[code].password !== password) {
-      return cb({ error: "Invalid room code or password" });
+  /* JOIN PRIVATE ROOM */
+  socket.on("joinPrivate", ({ username, code }) => {
+    const room = privateRooms[code];
+
+    if (!room) {
+      socket.emit("errorMessage", "Invalid room code");
+      return;
     }
 
+    socket.join(code);
+    room.users.push(socket.id);
+
     socket.username = username;
     socket.room = code;
-    rooms[code].users.add(socket.id);
-    socket.join(code);
 
-    cb({ success: true });
+    socket.emit("joinedPrivate", { code });
+    io.to(code).emit("systemMessage", `${username} joined the room`);
+  });
 
-    io.to(code).emit("message", {
-      user: "System",
-      text: `${username} joined the room`
+  /* CHAT MESSAGE (🔥 THIS WAS MISSING / BROKEN BEFORE) */
+  socket.on("chatMessage", ({ room, username, message }) => {
+    if (!room || !message) return;
+
+    io.to(room).emit("chatMessage", {
+      username,
+      message
     });
   });
 
-  socket.on("sendMessage", (text) => {
-    if (!socket.room) return;
-
-    io.to(socket.room).emit("message", {
-      user: socket.username,
-      text
-    });
+  /* LEAVE ROOM */
+  socket.on("leaveRoom", ({ room, username }) => {
+    socket.leave(room);
+    io.to(room).emit("systemMessage", `${username} left the chat`);
   });
 
-  socket.on("typing", (isTyping) => {
-    socket.to(socket.room).emit("typing", {
-      user: socket.username,
-      isTyping
-    });
-  });
-
-  socket.on("leaveRoom", () => {
-    if (!socket.room) return;
-
-    socket.leave(socket.room);
-    socket.to(socket.room).emit("message", {
-      user: "System",
-      text: `${socket.username} left the room`
-    });
-
-    socket.room = null;
-  });
-
+  /* DISCONNECT */
   socket.on("disconnect", () => {
-    if (socket.room && rooms[socket.room]) {
-      rooms[socket.room].users.delete(socket.id);
+    if (socket.room && socket.username) {
+      io.to(socket.room).emit(
+        "systemMessage",
+        `${socket.username} disconnected`
+      );
     }
+    console.log("User disconnected:", socket.id);
   });
 });
 
-server.listen(process.env.PORT || 3000, () => {
-  console.log("Server running");
+/* =========================
+   START SERVER
+========================= */
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log("Server running on port", PORT);
 });
