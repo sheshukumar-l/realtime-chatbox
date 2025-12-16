@@ -1,51 +1,55 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Realtime Chat — Discord Style</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Realtime Chat</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="app">
-    <aside id="sidebar">
-      <div class="logo">Chat</div>
 
-      <div class="section">
-        <div class="label">Rooms</div>
-        <ul id="roomsList" class="rooms"></ul>
-        <div class="room-create">
-          <input id="newRoomInput" placeholder="New room name" />
-          <button id="createRoomBtn">+</button>
-        </div>
-      </div>
+<div id="app">
 
-      <div class="section">
-        <div class="label">Your name</div>
-        <input id="usernameInput" placeholder="Type display name" />
-        <button id="joinGlobalBtn" class="wide">Join Global</button>
-      </div>
-    </aside>
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="show">
+    <h2 class="logo">ChatBox</h2>
 
-    <main id="main">
-      <header id="mainHeader">
-        <div id="roomTitle">Not in a room</div>
-        <div id="roomUsers">(0)</div>
-      </header>
+    <div class="section">
+      <input id="usernameInput" placeholder="Your name" />
+      <input id="roomInput" placeholder="Room name (optional)" />
+      <button id="joinGlobalBtn">Join Global</button>
+      <button id="joinRoomBtn">Join Private Room</button>
+    </div>
 
-      <div id="messages" class="messages"></div>
+    <div class="rooms">
+      <h3>Rooms</h3>
+      <ul id="roomList">
+        <li class="active">🌍 Global</li>
+      </ul>
+    </div>
+  </aside>
 
-      <div id="typingIndicator" class="typing"></div>
+  <!-- CHAT -->
+  <main id="chat">
+    <header class="chat-header">
+      <button id="toggleSidebar" class="mobile-btn">☰</button>
+      <h3 id="currentRoom">Global</h3>
+    </header>
 
-      <footer id="composer">
-        <input id="msgInput" placeholder="Message #general" />
-        <button id="sendBtn">Send</button>
-      </footer>
-    </main>
-  </div>
+    <div id="messages"></div>
+    <div id="typingIndicator"></div>
 
-  <!-- socket.io client -->
-  <script src="https://realtime-chatbox-f6jz.onrender.com/socket.io/socket.io.js"></script>
-  <script src="script.js"></script>
+    <div class="composer">
+      <input id="msgInput" placeholder="Type a message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </main>
+
+</div>
+
+<!-- SOCKET.IO -->
+<script src="https://realtime-chatbox-f6jz.onrender.com/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
