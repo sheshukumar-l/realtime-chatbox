@@ -1,19 +1,23 @@
-# Real-Time Chat Box Using Socket.IO
+# Real-time Chatbox
 
-A real-time chat box application built using Socket.IO, Node.js, Express.js, HTML, CSS, and JavaScript. The app enables instant two-way communication between users without refreshing the page.
+A real-time chat box application built using Socket.IO, Node.js, Express.js, HTML, CSS, and JavaScript.
+
+## Project Timeline
+
+Built in 2025.
 
 ## Features
 
-- Real-time messaging using Socket.IO
-- Node.js and Express.js backend server
-- Simple and responsive chat interface
-- Instant message broadcasting to connected users
-- Clean frontend structure with HTML, CSS, and JavaScript
+- Real-time message sending and receiving
+- Socket.IO based live communication
+- Node.js and Express backend server
+- Frontend chat interface using HTML, CSS, and JavaScript
+- Instant message broadcasting between connected users
 
 ## Tech Stack
 
-- HTML5
-- CSS3
+- HTML
+- CSS
 - JavaScript
 - Node.js
 - Express.js
